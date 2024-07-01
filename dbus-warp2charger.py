@@ -21,7 +21,7 @@ from vedbus import VeDbusService
 
 
 class DbusEvseChargerService:
-    def __init__(self, servicename, paths, productname='EVSE-Charger', connection='OpenEVSE JSON RAPI'):
+    def __init__(self, servicename, paths, productname='warp2-Charger', connection='Wapr2 JSON RAPI'):
         config = self._getConfig()
         deviceinstance = int(config['DEFAULT']['Deviceinstance'])
 
@@ -31,8 +31,8 @@ class DbusEvseChargerService:
         logging.debug("%s /DeviceInstance = %d" % (servicename, deviceinstance))
 
         paths_wo_unit = [
-            '/Status',
-            # value 'state' EVSE State - 1 Not Connected - 2 Connected - 3 Charging - 4 Error, 254 - sleep, 255 - disabled
+            '/State',
+            # value 'state' EVSE State - 0 Not Connected - 1 Waiting for release - 2 Ready to Load - 3 Charging - 4 Error
 		# old_goecharger 1: charging station ready, no vehicle 2: vehicle loads 3: Waiting for vehicle 4: Charge finished, vehicle still connected
             '/Mode'
         ]
@@ -98,7 +98,7 @@ class DbusEvseChargerService:
         accessType = config['DEFAULT']['AccessType']
 
         if accessType == 'OnPremise':
-            URL = "http://%s/status" % (config['ONPREMISE']['Host'])
+            URL = "http://%s/state" % (config['ONPREMISE']['Host'])
         else:
             raise ValueError("AccessType %s is not supported" % (config['DEFAULT']['AccessType']))
 
